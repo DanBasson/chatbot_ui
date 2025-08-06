@@ -3,7 +3,7 @@ import threading
 import queue##
 
 from static import HEADER_CSS
-from chat_logic import create_chat_handler
+from chat_logic import create_chat_handler###
 
 st.set_page_config(page_title="ג'אקו צ'אט")
 st.markdown(HEADER_CSS, unsafe_allow_html=True)
