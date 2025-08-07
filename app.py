@@ -37,7 +37,7 @@ if CHAT_HANDLER_KEY not in st.session_state and st.session_state.session_id:
 
         # Load existing chat history from database
         db_history = st.session_state.db.get_chat_history(st.session_state.session_id)
-        for msg in db_history:
+        for msg in db_history:##
             st.session_state.history.append({
                 ROLE_COLUMN: msg[ROLE_COLUMN],
                 CONTENT_COLUMN: msg[CONTENT_COLUMN]
