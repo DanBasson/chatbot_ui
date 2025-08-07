@@ -65,26 +65,19 @@ with chat_container:
         with st.chat_message(message[ROLE_COLUMN]):
             st.markdown(message[CONTENT_COLUMN])
 
-user_input = st.text_area(
-    label="",
-    placeholder=CHAT_INPUT_PLACEHOLDER,
-    height=60,  # Two lines height
-    key="user_input_area"
-)
+user_input = st.chat_input("השאלה שלי...")
 
-send_button = st.button("📤 שלח", key="send_button", type="primary")
+if user_input:
+    st.session_state.history.append({"role": "user", "content": user_input})
 
-if user_input and send_button:
-    st.session_state.history.append({ROLE_COLUMN: USER_ROLE, CONTENT_COLUMN: user_input})
-
-    with st.chat_message(USER_ROLE):
+    with st.chat_message("user"):
         st.markdown(user_input)
 
-    with st.chat_message(ASSISTANT_ROLE):
+    with st.chat_message("assistant"):
         response_placeholder = st.empty()
 
-        # Use existing chat handler or create fallback
-        chat_handler = getattr(st.session_state, 'chat_handler', create_chat_handler())
+        # Create chat handler and necessary objects
+        chat_handler = create_chat_handler()
         token_queue = queue.Queue()
         response_ready_event = threading.Event()
 
@@ -96,9 +89,7 @@ if user_input and send_button:
             response_placeholder, token_queue, response_ready_event
         )
 
-        st.session_state.history.append({ROLE_COLUMN: ASSISTANT_ROLE, CONTENT_COLUMN: rendered_text})
+        st.session_state.history.append({"role": "assistant", "content": rendered_text})
 
-        # Clear the input after sending
-        st.session_state.user_input_area = ""
 
 
