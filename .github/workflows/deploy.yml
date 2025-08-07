@@ -1,14 +1,17 @@
 name: Deploy to Main
 
 on:
-  push:
-    branches-ignore:
+  pull_request:
+    branches:
       - main
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
   contents: write
   pull-requests: write
+  actions: read
+  checks: write
 jobs:
   test:
     name: Run Tests
@@ -50,7 +53,7 @@ jobs:
         
       - name: Test Streamlit app
         run: |
-          python -c "import streamlit; import app; print('App imports successfully'); 1/0"
+          python -c "import streamlit; import app; print('App imports successfully')"
         continue-on-error: true
 
   approval:
@@ -62,12 +65,13 @@ jobs:
     steps:
       - name: Manual approval checkpoint
         run: |
-          echo "Tests passed! Waiting for manual approval to deploy to main..."
-          echo "Branch: ${{ github.ref_name }}"
+          echo "Tests passed! Waiting for manual approval to merge to main..."
+          echo "PR: ${{ github.event.pull_request.number }}"
+          echo "Branch: ${{ github.head_ref }}"
           echo "Commit: ${{ github.sha }}"
 
-  deploy:
-    name: Deploy to Main
+  merge:
+    name: Merge to Main
     runs-on: ubuntu-latest
     needs: [test, approval]
     if: success()
@@ -84,13 +88,9 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           
-      - name: Merge to main
+      - name: Merge PR to main
         run: |
-          git checkout main
-          git merge --no-ff --allow-unrelated-histories ${{ github.ref_name }} -m "Deploy: Merge ${{ github.ref_name }} to main"
-          git push origin main
-          
-      - name: Clean up feature branch
-        run: |
-          git push origin --delete ${{ github.ref_name }}
-        continue-on-error: true
+          echo "✅ Approved! Merging PR #${{ github.event.pull_request.number }} to main"
+          gh pr merge ${{ github.event.pull_request.number }} --merge --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
