@@ -5,7 +5,7 @@ import queue
 from static import HEADER_CSS
 from chat_logic import create_chat_handler##
 
-st.set_page_config(page_title="ג'אקו צ'אט")
+st.set_page_config(page_title="ג'אקו צ'אטyyyy")
 st.markdown(HEADER_CSS, unsafe_allow_html=True)
 
 if "history" not in st.session_state:
