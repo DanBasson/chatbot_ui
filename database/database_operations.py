@@ -3,7 +3,7 @@ Database operations for the chatbot application using Supabase.
 """
 
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
 from .supabase_client import get_supabase_client
 from core.environment import get_environment, get_environment_prefix
@@ -45,8 +45,8 @@ class ChatDatabase:
             USER_ID_COLUMN: user_id or DEFAULT_USER_ID,
             SESSION_NAME_COLUMN: session_name or f"{env_prefix} {DEFAULT_SESSION_NAME_TEMPLATE.format(timestamp=datetime.now().strftime(DEFAULT_TIMESTAMP_FORMAT))}",
             ENVIRONMENT_COLUMN: get_environment(),
-            CREATED_AT_COLUMN: datetime.now().isoformat(),
-            UPDATED_AT_COLUMN: datetime.now().isoformat()
+            CREATED_AT_COLUMN: datetime.now(timezone.utc).isoformat(),
+            UPDATED_AT_COLUMN: datetime.now(timezone.utc).isoformat()
         }
         
         try:
@@ -78,14 +78,14 @@ class ChatDatabase:
             CONTENT_COLUMN: content,
             ENVIRONMENT_COLUMN: get_environment(),
             METADATA_COLUMN: metadata or {},
-            TIMESTAMP_COLUMN: datetime.now().isoformat()
+            TIMESTAMP_COLUMN: datetime.now(timezone.utc).isoformat()
         }
         
         try:
             self.client.table(CHAT_MESSAGES_TABLE).insert(message_data).execute()
             # Update session updated_at
             self.client.table(CHAT_SESSIONS_TABLE).update({
-                UPDATED_AT_COLUMN: datetime.now().isoformat()
+                UPDATED_AT_COLUMN: datetime.now(timezone.utc).isoformat()
             }).eq(SESSION_ID_COLUMN, session_id).execute()
             
             return message_id
@@ -169,7 +169,7 @@ class ChatDatabase:
         try:
             update_data = {
                 METADATA_COLUMN: metadata,
-                UPDATED_AT_COLUMN: datetime.now().isoformat()
+                UPDATED_AT_COLUMN: datetime.now(timezone.utc).isoformat()
             }
             self.client.table(CHAT_SESSIONS_TABLE).update(update_data).eq(SESSION_ID_COLUMN, session_id).execute()
             return True
