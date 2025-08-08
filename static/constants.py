@@ -58,6 +58,13 @@ DEFAULT_SESSION_NAME_TEMPLATE = "Chat Session {timestamp}"
 DEFAULT_TIMESTAMP_FORMAT = "%Y-%m-%d %H:%M"
 
 # ==============================
+# ENVIRONMENT DETECTION
+# ==============================
+ENVIRONMENT_COLUMN = "environment"
+LOCAL_ENVIRONMENT = "local"
+CLOUD_ENVIRONMENT = "cloud"
+
+# ==============================
 # CHAT SIMULATION
 # ==============================
 SIMULATED_TOKENS = ["שלום", " ", "**לך**", ",", " ", "מה", " ", "שלומך", "?"]
@@ -90,6 +97,7 @@ CREATE_CHAT_SESSIONS_SQL = """
         session_id UUID UNIQUE NOT NULL,
         user_id TEXT NOT NULL DEFAULT 'anonymous',
         session_name TEXT NOT NULL,
+        environment TEXT NOT NULL DEFAULT 'local',
         metadata JSONB DEFAULT '{}',
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -103,6 +111,7 @@ CREATE_CHAT_MESSAGES_SQL = """
         session_id UUID NOT NULL,
         role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
         content TEXT NOT NULL,
+        environment TEXT NOT NULL DEFAULT 'local',
         metadata JSONB DEFAULT '{}',
         timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
         FOREIGN KEY (session_id) REFERENCES chat_sessions(session_id) ON DELETE CASCADE
@@ -124,10 +133,3 @@ INDEXES_SQL = [
 # ==============================
 FONTS_URL = "https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
 
-# ==============================
-# DEBUG MESSAGES (for development)
-# ==============================
-DEBUG_SEPARATOR = "========"
-DEBUG_TOKEN_RECEIVED = "1111"
-DEBUG_WAITING = "222"
-DEBUG_RENDERING = "333"
