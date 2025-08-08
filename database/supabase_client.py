@@ -30,7 +30,8 @@ class SupabaseClient:
             try:
                 url = st.secrets[SUPABASE_URL_ENV]
                 key = st.secrets[SUPABASE_KEY_ENV]
-            except (KeyError, AttributeError):
+            except (KeyError, AttributeError, FileNotFoundError, Exception):
+                # st.secrets may not be available or configured
                 pass
         
         # Fallback to environment variables (for local development)
