@@ -14,6 +14,14 @@ from static import (
 
 load_dotenv()
 
+# Debug environment detection
+from core.environment import get_environment
+import os
+current_env = get_environment()
+st.write(f"🔍 Current environment: {current_env}")
+st.write(f"🔑 SUPABASE_URL present: {bool(os.getenv('SUPABASE_URL'))}")
+st.write(f"🔑 SUPABASE_KEY present: {bool(os.getenv('SUPABASE_KEY'))}")
+
 st.set_page_config(page_title=PAGE_TITLE)
 st.markdown(HEADER_CSS, unsafe_allow_html=True)
 
