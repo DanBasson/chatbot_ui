@@ -3,7 +3,8 @@ Database operations for the chatbot application using Supabase.
 """
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
+import pytz
 from typing import Dict, List, Optional, Any
 from .supabase_client import get_supabase_client
 from core.environment import get_environment, get_environment_prefix
@@ -15,8 +16,14 @@ from static import (
     DEFAULT_TIMESTAMP_FORMAT, USER_ROLE, ASSISTANT_ROLE,
     ERROR_CREATING_SESSION, ERROR_SAVING_MESSAGE, ERROR_RETRIEVING_HISTORY,
     ERROR_RETRIEVING_SESSIONS, ERROR_DELETING_SESSION, ERROR_UPDATING_METADATA,
-    ENVIRONMENT_COLUMN
+    ENVIRONMENT_COLUMN, TURKEY_TIMEZONE
 )
+
+
+def get_turkey_time() -> str:
+    """Get current time in Turkey timezone as ISO string."""
+    turkey_tz = pytz.timezone(TURKEY_TIMEZONE)
+    return datetime.now(turkey_tz).isoformat()
 
 
 
@@ -43,10 +50,10 @@ class ChatDatabase:
         session_data = {
             SESSION_ID_COLUMN: session_id,
             USER_ID_COLUMN: user_id or DEFAULT_USER_ID,
-            SESSION_NAME_COLUMN: session_name or f"{env_prefix} {DEFAULT_SESSION_NAME_TEMPLATE.format(timestamp=datetime.now().strftime(DEFAULT_TIMESTAMP_FORMAT))}",
+            SESSION_NAME_COLUMN: session_name or f"{env_prefix} {DEFAULT_SESSION_NAME_TEMPLATE.format(timestamp=datetime.now(pytz.timezone(TURKEY_TIMEZONE)).strftime(DEFAULT_TIMESTAMP_FORMAT))}",
             ENVIRONMENT_COLUMN: get_environment(),
-            CREATED_AT_COLUMN: datetime.now(timezone.utc).isoformat(),
-            UPDATED_AT_COLUMN: datetime.now(timezone.utc).isoformat()
+            CREATED_AT_COLUMN: get_turkey_time(),
+            UPDATED_AT_COLUMN: get_turkey_time()
         }
         
         try:
@@ -78,14 +85,14 @@ class ChatDatabase:
             CONTENT_COLUMN: content,
             ENVIRONMENT_COLUMN: get_environment(),
             METADATA_COLUMN: metadata or {},
-            TIMESTAMP_COLUMN: datetime.now(timezone.utc).isoformat()
+            TIMESTAMP_COLUMN: get_turkey_time()
         }
         
         try:
             self.client.table(CHAT_MESSAGES_TABLE).insert(message_data).execute()
             # Update session updated_at
             self.client.table(CHAT_SESSIONS_TABLE).update({
-                UPDATED_AT_COLUMN: datetime.now(timezone.utc).isoformat()
+                UPDATED_AT_COLUMN: get_turkey_time()
             }).eq(SESSION_ID_COLUMN, session_id).execute()
             
             return message_id
@@ -169,7 +176,7 @@ class ChatDatabase:
         try:
             update_data = {
                 METADATA_COLUMN: metadata,
-                UPDATED_AT_COLUMN: datetime.now(timezone.utc).isoformat()
+                UPDATED_AT_COLUMN: get_turkey_time()
             }
             self.client.table(CHAT_SESSIONS_TABLE).update(update_data).eq(SESSION_ID_COLUMN, session_id).execute()
             return True

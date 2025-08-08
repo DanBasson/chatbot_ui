@@ -65,6 +65,11 @@ LOCAL_ENVIRONMENT = "local"
 CLOUD_ENVIRONMENT = "cloud"
 
 # ==============================
+# TIMEZONE SETTINGS
+# ==============================
+TURKEY_TIMEZONE = "Europe/Istanbul"
+
+# ==============================
 # CHAT SIMULATION
 # ==============================
 SIMULATED_TOKENS = ["שלום", " ", "**לך**", ",", " ", "מה", " ", "שלומך", "?"]
