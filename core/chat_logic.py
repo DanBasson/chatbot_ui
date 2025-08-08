@@ -3,10 +3,9 @@ import queue
 import time
 from typing import Callable, Optional
 from langchain.callbacks.base import BaseCallbackHandler
-from static import (
+from static.constants import (
     SIMULATED_TOKENS, LOADING_DOTS, CHAT_SIMULATION_DELAY, 
-    TOKEN_DELAY, QUEUE_TIMEOUT, DEBUG_SEPARATOR, DEBUG_TOKEN_RECEIVED, 
-    DEBUG_WAITING, DEBUG_RENDERING, USER_ROLE, ASSISTANT_ROLE
+    TOKEN_DELAY, QUEUE_TIMEOUT, USER_ROLE, ASSISTANT_ROLE
 )
 
 
