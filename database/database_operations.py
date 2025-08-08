@@ -6,6 +6,7 @@ import uuid
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from .supabase_client import get_supabase_client
+from core.environment import get_environment, get_environment_prefix
 from static import (
     CHAT_SESSIONS_TABLE, CHAT_MESSAGES_TABLE, SESSION_ID_COLUMN, 
     USER_ID_COLUMN, SESSION_NAME_COLUMN, MESSAGE_ID_COLUMN, ROLE_COLUMN,
@@ -13,7 +14,8 @@ from static import (
     UPDATED_AT_COLUMN, DEFAULT_USER_ID, DEFAULT_SESSION_NAME_TEMPLATE,
     DEFAULT_TIMESTAMP_FORMAT, USER_ROLE, ASSISTANT_ROLE,
     ERROR_CREATING_SESSION, ERROR_SAVING_MESSAGE, ERROR_RETRIEVING_HISTORY,
-    ERROR_RETRIEVING_SESSIONS, ERROR_DELETING_SESSION, ERROR_UPDATING_METADATA
+    ERROR_RETRIEVING_SESSIONS, ERROR_DELETING_SESSION, ERROR_UPDATING_METADATA,
+    ENVIRONMENT_COLUMN
 )
 
 
@@ -37,10 +39,12 @@ class ChatDatabase:
         """
         session_id = str(uuid.uuid4())
         
+        env_prefix = get_environment_prefix()
         session_data = {
             SESSION_ID_COLUMN: session_id,
             USER_ID_COLUMN: user_id or DEFAULT_USER_ID,
-            SESSION_NAME_COLUMN: session_name or DEFAULT_SESSION_NAME_TEMPLATE.format(timestamp=datetime.now().strftime(DEFAULT_TIMESTAMP_FORMAT)),
+            SESSION_NAME_COLUMN: session_name or f"{env_prefix} {DEFAULT_SESSION_NAME_TEMPLATE.format(timestamp=datetime.now().strftime(DEFAULT_TIMESTAMP_FORMAT))}",
+            ENVIRONMENT_COLUMN: get_environment(),
             CREATED_AT_COLUMN: datetime.now().isoformat(),
             UPDATED_AT_COLUMN: datetime.now().isoformat()
         }
@@ -72,6 +76,7 @@ class ChatDatabase:
             SESSION_ID_COLUMN: session_id,
             ROLE_COLUMN: role,
             CONTENT_COLUMN: content,
+            ENVIRONMENT_COLUMN: get_environment(),
             METADATA_COLUMN: metadata or {},
             TIMESTAMP_COLUMN: datetime.now().isoformat()
         }

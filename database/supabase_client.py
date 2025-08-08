@@ -13,16 +13,18 @@ class SupabaseClient:
     
     def __init__(self):
         self.client: Optional[Client] = None
-        self.url = os.getenv(SUPABASE_URL_ENV)
-        self.key = os.getenv(SUPABASE_KEY_ENV)
         
     def connect(self) -> Client:
         """Initialize and return Supabase client."""
-        if not self.url or not self.key:
+        # Get environment variables when connecting, not during initialization
+        url = os.getenv(SUPABASE_URL_ENV)
+        key = os.getenv(SUPABASE_KEY_ENV)
+        
+        if not url or not key:
             raise ValueError(ERROR_SUPABASE_CREDENTIALS)
         
         if self.client is None:
-            self.client = create_client(self.url, self.key)
+            self.client = create_client(url, key)
         
         return self.client
     

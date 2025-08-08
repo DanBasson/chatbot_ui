@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from core.chat_logic import create_chat_handler_with_db, create_chat_handler
 from database import ChatDatabase
-from static.ui import HEADER_CSS
+from static.ui_constants import HEADER_CSS
 from static import (
     PAGE_TITLE, CHAT_INPUT_PLACEHOLDER, HISTORY_KEY,
     USER_ROLE, ASSISTANT_ROLE, ROLE_COLUMN, CONTENT_COLUMN,
@@ -76,8 +76,12 @@ if user_input:
     with st.chat_message("assistant"):
         response_placeholder = st.empty()
 
-        # Create chat handler and necessary objects
-        chat_handler = create_chat_handler()
+        # Use the database-enabled chat handler from session state
+        if st.session_state.get('chat_handler'):
+            chat_handler = st.session_state.chat_handler
+        else:
+            chat_handler = create_chat_handler()
+            
         token_queue = queue.Queue()
         response_ready_event = threading.Event()
 
