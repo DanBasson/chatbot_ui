@@ -1,7 +1,7 @@
 import streamlit as st
 import threading
 import queue
-from dotenv import load_dotenv
+from dotenv import load_dotenv#
 
 from core.chat_logic import create_chat_handler_with_db, create_chat_handler
 from database import ChatDatabase
