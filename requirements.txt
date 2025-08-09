@@ -4,3 +4,6 @@ groq
 supabase
 python-dotenv
 pytz
+psycopg2-binary
+sqlalchemy
+boto3
