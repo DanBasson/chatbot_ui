@@ -1,0 +1,19 @@
+credentials:
+  usernames:
+    admin:
+      email: admin@example.com
+      first_name: מנהל
+      last_name: המערכת
+      name: מנהל המערכת
+      password: your_password_here
+    user:
+      email: user@example.com
+      first_name: משתמש
+      last_name: רגיל
+      name: משתמש רגיל
+      password: your_password_here
+
+cookie:
+  expiry_days: 30
+  key: change_this_secret_key_in_production
+  name: chatbot_auth_cookie
