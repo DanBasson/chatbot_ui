@@ -4,6 +4,7 @@ import queue
 from dotenv import load_dotenv#
 
 from core.chat_logic import create_chat_handler_with_db, create_chat_handler
+from core.auth import get_auth_manager
 from database import ChatDatabase
 from static.ui_constants import HEADER_CSS
 from static import (
@@ -24,6 +25,11 @@ load_dotenv()
 
 st.set_page_config(page_title=PAGE_TITLE)
 st.markdown(HEADER_CSS, unsafe_allow_html=True)
+
+# Handle authentication
+auth_manager = get_auth_manager()
+if not auth_manager.require_authentication():
+    st.stop()
 
 if HISTORY_KEY not in st.session_state:
     st.session_state.history = []
